@@ -66,7 +66,7 @@ async def init():
     async def get_post(_, message: Message):                    
         msg = "<b>LIST CHANNEL POST</b>\n\n"
         all_list = await mongo.get_served_chats()
-        if not list:
+        if not all_list:
             await message.reply("<b>Tidak ada blacklist gcast yang tersimpan.</b>")
             return
         for list in all_list:

@@ -58,7 +58,7 @@ async def init():
             )
             added = await mongo.add_served_chat(chat_id.id)
             if added:
-                await message.reply_text(f"Berhasil Channel [{chat_id.title}]({chat_id.invitelink}) telah ditambahkan di list POST")
+                await message.reply_text(f"Berhasil Channel [{chat_id.title}]({chat_id.invite_link}) telah ditambahkan di list POST")
             else:
                 await message.reply("Gagal menambahkan Channel ke lisi POST")
                 
@@ -74,7 +74,7 @@ async def init():
             return
         for list in served_chats:
             group_name = await app.get_chat(list)
-            msg += f"• [{group_name.title}]({group_name.invitelink})\n\n"
+            msg += f"• [{group_name.title}]({group_name.invite_link})\n\n"
         await message.reply(msg)
         
         
@@ -96,7 +96,7 @@ async def init():
             )
             added = await mongo.delete_served_chat(chat_id.id)
             if added:
-                await message.reply_text(f"Berhasil Channel [{chat_id.title}]({chat_id.invitelink}) telah dihapus dari list POST")
+                await message.reply_text(f"Berhasil Channel [{chat_id.title}]({chat_id.invite_link}) telah dihapus dari list POST")
             else:
                 await message.reply("Gagal menghapus Channel dari lisi POST")        
         

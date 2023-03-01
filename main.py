@@ -58,7 +58,7 @@ async def init():
             )
             added = await mongo.add_served_chat(chat_id.id)
             if added:
-                await message.reply_text("Berhasil Channel {} telah ditambahbahkan di list POST".format(chat_id.mention))
+                await message.reply_text("Berhasil Channel {} telah ditambahbahkan di list POST".format(chat_id.title))
             else:
                 await message.reply("Gagal menambahkan Channel ke lisi POST")
                 
@@ -93,7 +93,7 @@ async def init():
             )
             added = await mongo.delete_served_chat(chat_id.id)
             if added:
-                await message.reply_text("Berhasil Channel {} telah dihapus dari list POST".format(chat_id.mention))
+                await message.reply_text("Berhasil Channel {} telah dihapus dari list POST".format(chat_id.title))
             else:
                 await message.reply("Gagal menghapus Channel dari lisi POST")        
         

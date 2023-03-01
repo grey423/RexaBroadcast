@@ -50,8 +50,12 @@ if MONGO_DB_URI != None:
     async def add_served_chat(chat_id: int):
         is_served = await is_served_chat(chat_id)
         if is_served:
-            return
-        return await chatsdb.insert_one({"chat_id": chat_id})
+            await chatsdb.update_one(
+                {"$set": {"chat_id": chat_id}},
+            )
+        else:
+            await chatsdb.insert_one({"chat_id": chat_id})
+    
     
     async def delete_served_chat(chat_id: int):
         await chatsdb.delete_one({"chat_id": chat_id})    

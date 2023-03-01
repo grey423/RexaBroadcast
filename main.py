@@ -33,17 +33,70 @@ async def init():
 
     # Ini auto buat nambah grup di database rex   
 
-    @app.on_message(filters.new_chat_members, group=welcome_group)
-    async def welcome(_, message: Message):
-        chat_id = message.chat.id
-        await mongo.add_served_chat(chat_id)
+
 
     #Ini auto buat nambah user di database rex
     @app.on_message(filters.command("start"))
     async def start_command(_, message: Message):
-        await mongo.add_served_user(message.from_user.id)
+        await message.reply("Bot Hidup masseh")
 
-
+    @app.on_message(filters.command("addpost"))
+    async def add_post(_, message: Message):
+        if message.reply_to_message:
+            chat_id = message.reply_to_message.sender.chat.id
+        else:
+            if len(message.command) < 2:
+                return await message.reply_text("Berikan id grup/channel.")
+            chat_id = message.text.split()[1]
+            if "@" in chat_id:
+                chat_id = chat_id.replace("@", "")
+            chat_id = await app.get_chat(chat_id)
+            schats = await mongo.get_served_chats()
+            if chat_id.id in schats:
+                return await message.reply_text(
+                    "Grup / Channel ini sudah masuk di list POST",
+            )
+            added = await mongo.add_served_chat(chat_id.id)
+            if added:
+                await message.reply_text("Berhasil Channel {} telah ditambahbahkan di list POST".format(chat_id.mention))
+            else:
+                await message.reply("Gagal menambahkan Channel ke lisi POST")
+                
+    @app.on_message(filters.command("getpost"))                    
+    async def get_post(_, message: Message):                    
+        msg = "<b>LIST CHANNEL POST</b>\n\n"
+        all_list = await mongo.get_served_chats()
+        if not list:
+            await message.reply("<b>Tidak ada blacklist gcast yang tersimpan.</b>")
+            return
+        for list in all_list:
+            group_name = await app.get_chat(list)
+            msg += f"• {group_name.mention}\n\n"
+        await message.reply(msg)
+        
+        
+    @app.on_message(filters.command("delpost"))
+    async def delete_post(_, message: Message):
+        if message.reply_to_message:
+            chat_id = message.reply_to_message.sender.chat.id
+        else:
+            if len(message.command) < 2:
+                return await message.reply_text("Berikan id grup/channel.")
+            chat_id = message.text.split()[1]
+            if "@" in chat_id:
+                chat_id = chat_id.replace("@", "")
+            chat_id = await app.get_chat(chat_id)
+            schats = await mongo.get_served_chats()
+            if chat_id.id in schats:
+                return await message.reply_text(
+                    "Grup / Channel ini sudah masuk di list POST",
+            )
+            added = await mongo.delete_served_chat(chat_id.id)
+            if added:
+                await message.reply_text("Berhasil Channel {} telah dihapus dari list POST".format(chat_id.mention))
+            else:
+                await message.reply("Gagal menghapus Channel dari lisi POST")        
+        
     # Ini buat stats rex
 
     @app.on_message(
@@ -137,6 +190,8 @@ async def init():
         scht = 0
         served_chats = []
         schats = await mongo.get_served_chats()
+        if not schats:
+            return await message.reply("Tidak ada listy Channel POST yang tersimpan")
         for chat in schats:
             served_chats.append(int(chat["chat_id"]))
         for i in served_chats:

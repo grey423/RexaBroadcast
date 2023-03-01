@@ -58,7 +58,7 @@ async def init():
             )
             added = await mongo.add_served_chat(chat_id.id)
             if added:
-                await message.reply_text("Berhasil Channel {} telah ditambahbahkan di list POST".format(chat_id.title))
+                await message.reply_text(f"Berhasil Channel [{chat_id.title}]({chat_id.invitelink}) telah ditambahkan di list POST")
             else:
                 await message.reply("Gagal menambahkan Channel ke lisi POST")
                 
@@ -74,7 +74,7 @@ async def init():
             return
         for list in served_chats:
             group_name = await app.get_chat(list)
-            msg += f"• {group_name.title}\n\n"
+            msg += f"• [{group_name.title}]({group_name.invitelink})\n\n"
         await message.reply(msg)
         
         
@@ -96,7 +96,7 @@ async def init():
             )
             added = await mongo.delete_served_chat(chat_id.id)
             if added:
-                await message.reply_text("Berhasil Channel {} telah dihapus dari list POST".format(chat_id.title))
+                await message.reply_text(f"Berhasil Channel [{chat_id.title}]({chat_id.invitelink}) telah dihapus dari list POST")
             else:
                 await message.reply("Gagal menghapus Channel dari lisi POST")        
         
@@ -170,15 +170,15 @@ async def init():
             pass
 
 
-    # Ini broadcastgroup rex
+    # Ini Post
 
     @app.on_message(
-        filters.command("broadcastgroup") & filters.user(SUDO_USERS)
+        filters.command("post") & filters.user(SUDO_USERS)
     )
     async def broad_group(_, message: Message):
         if db is None:
             return await message.reply_text(
-                "MONGO_DB_URI ny mna mas rexa. Tambahin dong"
+                "MONGO_DB_URI ny mna Tambahin dong"
             )
         if message.reply_to_message:
             x = message.reply_to_message.message_id
@@ -186,7 +186,7 @@ async def init():
         else:
             if len(message.command) < 2:
                 return await message.reply_text(
-                    "**Usage**:\n/broadcastgroup [MESSAGE] or [Reply to a Message]"
+                    "**Usage**:\n/post  [Text] atau [Balas kepesan]"
                 )
             query = message.text.split(None, 1)[1]
 
@@ -194,7 +194,7 @@ async def init():
         served_chats = []
         schats = await mongo.get_served_chats()
         if not schats:
-            return await message.reply("Tidak ada listy Channel POST yang tersimpan")
+            return await message.reply("Tidak ada list Channel POST yang tersimpan")
         for chat in schats:
             served_chats.append(int(chat["chat_id"]))
         for i in served_chats:
@@ -214,12 +214,12 @@ async def init():
                 pass
         try:
             await message.reply_text(
-                f"**Broadcasted Message to {scht} Groups.**"
+                f"**Konten terposting di {scht} Channel.**"
             )
         except:
             pass
 
-    print("[Rexa Ganteng] - Rexa Ganteng Started")
+    print("[Bot Posting] - Bot Posting Started")
     await idle()
 
 

@@ -71,7 +71,7 @@ async def init():
             return
         for list in all_list:
             group_name = await app.get_chat(list)
-            msg += f"• {group_name.mention}\n\n"
+            msg += f"• {group_name.title}\n\n"
         await message.reply(msg)
         
         

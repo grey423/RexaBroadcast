@@ -5,7 +5,7 @@ from sys import version as pyver
 
 import pyrogram
 from pyrogram import __version__ as pyrover
-from pyrogram import filters, idle
+from pyrogram import filters, idle, enums
 from pyrogram.errors import FloodWait
 from pyrogram.types import Message
 
@@ -42,7 +42,7 @@ async def init():
 👋🏻 Hallo, <a href=tg://openmessage?user_id={message.from_user.id}>{message.from_user.first_name} {message.from_user.last_name or ''}</a> Ada yang bisa kami bantu?      
 Silahkan sampaikan keinginan kamu disini.
 """
-        await message.reply(msg)
+        await message.reply(msg, enums.ParseMode.MARKDOWN)
 
         
     @app.on_message(filters.command("menu"))

@@ -40,6 +40,27 @@ async def init():
     async def start_command(_, message: Message):
         await message.reply("Bot Hidup masseh")
 
+    @app.on_message(filters.command("menu"))
+    async def menu_command(_, message: Message):
+        msg = """
+LIST MENU BOT
+
+• /post [text] atau [balas ke pesan] - Untuk memposting konten ke semua channel yang tersimpan di list POST.
+  contoh : /post promo hari ini gaes.
+
+• /addpost [id / username channel] - Untuk menambahkan channel ke list POST.
+  contoh : /addpost @channelku
+
+• /delpost [id / username channel] - Untuk menghapus channel dari list POST.
+  contoh : /delpost @channelku
+
+• /getpost - Untuk melihat list channel POST yang terisimpan.
+
+• /broadcast [text] atau [balas ke pesan] - Untuk menyiarkan pesan atau broadcasting ke semua user yang pernah start bot.
+
+        await message.reply(msg)
+
+
     @app.on_message(filters.command("addpost"))
     async def add_post(_, message: Message):
         if message.reply_to_message:
@@ -84,7 +105,7 @@ async def init():
             chat_id = message.reply_to_message.sender.chat.id
         else:
             if len(message.command) < 2:
-                return await message.reply_text("Berikan id grup/channel.")
+                return await message.reply_text("Berikan username atau id channel.")
             chat_id = message.text.split()[1]
             if "@" in chat_id:
                 chat_id = chat_id.replace("@", "")

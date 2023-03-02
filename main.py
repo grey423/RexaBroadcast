@@ -38,8 +38,8 @@ async def init():
     @app.on_message(filters.command("start"))
     async def start_command(_, message: Message):
         await mongo.add_served_user(message.from_user.id)
-        msg = """
-<b>👋🏻 Hallo <a href=tg://openmessage?user_id={message.from_user.id}>{message.from_user.first_name} {message.from_user.last_name or ''}</a>!</b> Ada yang bisa kami bantu?      
+        msg = f"""
+<b>👋🏻 Hallo, <a href=tg://openmessage?user_id={message.from_user.id}>{message.from_user.first_name} {message.from_user.last_name or ''}</a> Ada yang bisa kami bantu?      
 Silahkan sampaikan keinginan kamu disini.
 """
         await message.reply(msg, enums.ParseMode.MARKDOWN)

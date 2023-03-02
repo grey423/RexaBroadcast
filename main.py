@@ -35,11 +35,16 @@ async def init():
 
 
 
-    #Ini auto buat nambah user di database rex
     @app.on_message(filters.command("start"))
     async def start_command(_, message: Message):
-        await message.reply("Bot Hidup masseh")
+        await mongo.add_served_user(message.from_user.id)
+        msg = """
+👋🏻 Hallo, <a href=tg://openmessage?user_id={message.from_user.id}>{message.from_user.first_name} {message.from_user.last_name or ''}</a> Ada yang bisa kami bantu?      
+Silahkan sampaikan keinginan kamu disini.
+"""
+        await message.reply(msg)
 
+        
     @app.on_message(filters.command("menu"))
     async def menu_command(_, message: Message):
         msg = """
@@ -58,6 +63,8 @@ LIST MENU BOT
 
 • /broadcast [text] atau [balas ke pesan] - Untuk menyiarkan pesan atau broadcasting ke semua user yang pernah start bot.
 
+• /stats - Untuk melihat statistik pengguna bot
+"""
         await message.reply(msg)
 
 
@@ -67,7 +74,7 @@ LIST MENU BOT
             chat_id = message.reply_to_message.sender.chat.id
         else:
             if len(message.command) < 2:
-                return await message.reply_text("Berikan id grup/channel.")
+                return await message.reply_text("Berikan id / username channel")
             chat_id = message.text.split()[1]
             if "@" in chat_id:
                 chat_id = chat_id.replace("@", "")
@@ -75,27 +82,30 @@ LIST MENU BOT
             schats = await mongo.get_served_chats()
             if chat_id.id in schats:
                 return await message.reply_text(
-                    "Grup / Channel ini sudah masuk di list POST",
+                    "Channel ini sudah masuk di list POST",
             )
             added = await mongo.add_served_chat(chat_id.id)
             if added:
                 await message.reply_text(f"Berhasil Channel [{chat_id.title}]({chat_id.invite_link}) telah ditambahkan di list POST")
             else:
-                await message.reply("Gagal menambahkan Channel ke lisi POST")
+                await message.reply("Gagal menambahkan Channel ke lis POST")
+                
                 
     @app.on_message(filters.command("getpost"))                    
     async def get_post(_, message: Message):                    
         msg = "<b>LIST CHANNEL POST</b>\n\n"
+        count = 0    
         served_chats = []
         all_list = await mongo.get_served_chats()
         for chat in all_list:
             served_chats.append(int(chat["chat_id"]))    
         if not all_list:
-            await message.reply("<b>Tidak ada blacklist gcast yang tersimpan.</b>")
+            await message.reply("Tidak ada list channel yang tersimpan.</b>")
             return
         for list in served_chats:
             group_name = await app.get_chat(list)
-            msg += f"• [{group_name.title}]({group_name.invite_link})\n\n"
+            count += 1       
+            msg += f"{count}. [{group_name.title}]({group_name.invite_link})\n\n"
         await message.reply(msg)
         
         
@@ -113,13 +123,13 @@ LIST MENU BOT
             schats = await mongo.get_served_chats()
             if chat_id.id in schats:
                 return await message.reply_text(
-                    "Grup / Channel ini sudah masuk di list POST",
+                    "Channel ini sudah masuk di list POST",
             )
             added = await mongo.delete_served_chat(chat_id.id)
             if added:
                 await message.reply_text(f"Berhasil Channel [{chat_id.title}]({chat_id.invite_link}) telah dihapus dari list POST")
             else:
-                await message.reply("Gagal menghapus Channel dari lisi POST")        
+                await message.reply("Gagal menghapus Channel dari list POST")        
         
     # Ini buat stats rex
 
@@ -133,20 +143,17 @@ LIST MENU BOT
             )
         served_users = len(await mongo.get_served_users())
         served_chats = len(await mongo.get_served_chats())
-        text = f""" **Game Bot Stats:**
+        text = f"""📊 **Statistik Bot:**
         
-**Python Version :** {pyver.split()[0]}
-**Pyrogram Version :** {pyrover}
-
-**Served Users:** {served_users} 
-**Served Groups:** {served_chats}"""
+👤 Stats Pengguna: {served_users} Users
+"""
         await message.reply_text(text)
 
 
     #Ini buat broadcastuser rex
 
     @app.on_message(
-        filters.command("broadcastuser") & filters.user(SUDO_USERS)
+        filters.command("broadcast") & filters.user(SUDO_USERS)
     )
     async def broadcast_func(_, message: Message):
         if db is None:
@@ -159,7 +166,7 @@ LIST MENU BOT
         else:
             if len(message.command) < 2:
                 return await message.reply_text(
-                    "**Usage**:\n/broadcastusers [MESSAGE] or [Reply to a Message]"
+                    "**Usage**:\n/broadcast [MESSAGE] or [Reply to a Message]"
                 )
             query = message.text.split(None, 1)[1]
 
@@ -207,7 +214,7 @@ LIST MENU BOT
         else:
             if len(message.command) < 2:
                 return await message.reply_text(
-                    "**Usage**:\n/post  [Text] atau [Balas kepesan]"
+                    "**Usage**:\n/post  [Text] atau [Balas ke pesan]"
                 )
             query = message.text.split(None, 1)[1]
 

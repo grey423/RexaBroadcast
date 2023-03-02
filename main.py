@@ -39,7 +39,7 @@ async def init():
     async def start_command(_, message: Message):
         await mongo.add_served_user(message.from_user.id)
         msg = f"""
-<b>👋🏻 Hallo, <a href=tg://openmessage?user_id={message.from_user.id}>{message.from_user.first_name} {message.from_user.last_name or ''}</a> Ada yang bisa kami bantu?      
+👋🏻 Hallo, <a href=tg://openmessage?user_id={message.from_user.id}>{message.from_user.first_name} {message.from_user.last_name or ''}</a> Ada yang bisa kami bantu?      
 Silahkan sampaikan keinginan kamu disini.
 """
         await message.reply(msg, enums.ParseMode.MARKDOWN)
@@ -48,7 +48,7 @@ Silahkan sampaikan keinginan kamu disini.
     @app.on_message(filters.command("menu"))
     async def menu_command(_, message: Message):
         msg = """
-LIST MENU BOT
+<b>LIST MENU BOT</b>
 
 • /post [text] atau [balas ke pesan] - Untuk memposting konten ke semua channel yang tersimpan di list POST.
   contoh : /post promo hari ini gaes.

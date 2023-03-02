@@ -251,8 +251,6 @@ LIST MENU BOT
     @app.on_message(filters.private)
     async def incoming_private(_, message):
         user_id = message.from_user.id
-        if await mongo.is_banned_user(user_id):
-            return
         if user_id in SUDO_USERS:
             if message.reply_to_message:
                 if (
@@ -280,17 +278,6 @@ LIST MENU BOT
                     return await message.reply_text(
                         "Failed to send the message, User might have blocked the bot or something wrong happened. Please check logs"
                     )
-        else:
-            if await mongo.is_group():
-                try:
-                    forwarded = await app.forward_messages(
-                        "-1001692951846",
-                        message.chat.id,
-                        message.id,
-                    )
-                    save[forwarded.id] = user_id
-                except:
-                    pass
             else:
                 for user in SUDO_USERS:
                     try:

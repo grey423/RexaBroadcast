@@ -311,6 +311,13 @@ Silahkan sampaikan keinginan kamu disini.
                 message.text == "/unblock"
                 or message.text == "/block"
                 or message.text == "/broadcast"
+                or message.text == "/menu"
+                or message.text == "/stats"
+                or message.text == "/post" 
+                or message.text == "/addpost"                
+                or message.text == "/getpost"                
+                or message.text == "/delpost"                
+                
             ):
                 return
             replied_id = message.reply_to_message_id

@@ -12,7 +12,10 @@ if MONGO_DB_URI != None:
 
     usersdb = db.users
     chatsdb = db.chats
-
+    blockeddb = db.block
+    modedb = db.mode
+    modelist = {}    
+    
     # Ini get Users nya om
     async def is_served_user(user_id: int) -> bool:
         user = await usersdb.find_one({"user_id": user_id})
